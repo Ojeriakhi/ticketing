@@ -13,12 +13,16 @@ const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+
+
     const createUser = async(email, password) => {
         try {
             setLoading(true)
-            await createUserWithEmailAndPassword(auth, email,password);
+            await createUserWithEmailAndPassword(auth, email,password)
             toast.success('Sign Up Successful');
             navigate("/");
+
+            
         } catch (error) {
             console.log(error);
             toast.error(error.message);
