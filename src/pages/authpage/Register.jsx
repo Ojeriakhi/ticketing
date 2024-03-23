@@ -12,8 +12,9 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "./Authprovider";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { db } from "../../config/firebase";
+import spinner from '../../assets/spinner.svg'
+
+
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,8 +26,9 @@ const Register = () => {
   if (loading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
-        <span className="loading loading-dots loading-lg flex item-center mx-auto"></span>
-      </div>
+        <img src={spinner} alt="loading" className="animate-spin flex item-center mx-auto"/>
+  
+    </div>
     );
   }
 
@@ -34,30 +36,13 @@ const Register = () => {
     navigate("/");
   }
 
-  const addUserToDatabase = async (email, uid) => {
-    const userCollectionRef = collection(db, "ticketer_user");
-    const documentData = {
-      email: email,
-      uid: uid,
-    };
-    const documnetRef = doc(userCollectionRef, uid);
-    await setDoc(documnetRef, documentData);
-  };
+
   const handleSubmit = async () => {
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    createUser(email, password).then((user) => {
-      console.log('THE USER ID ISSS',user.uid);
-      const userCollectionRef = collection(db, "ticketer_user");
-      const documentData = {
-        email: user.email,
-        uid: user.uid,
-      };
-      const documnetRef = doc(userCollectionRef, user.uid);
-      setDoc(documnetRef, documentData);
-    });
+    createUser(email, password)
   };
 
   if (!user) {

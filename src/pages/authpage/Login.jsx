@@ -11,6 +11,7 @@ import {
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./Authprovider";
+import spinner from '../../assets/spinner.svg'
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,7 +22,8 @@ const {user, loginUser, loading} = useContext(AuthContext);
 if (loading) {
   return (
     <div className="w-full h-screen flex justify-center items-center">
-    <span className="loading loading-dots loading-lg flex item-center mx-auto"></span>
+      <img src={spinner} alt="loading" className="animate-spin flex item-center mx-auto"/>
+
   </div>
   );
 }
@@ -36,7 +38,7 @@ if (loading) {
     })
   }
 
-  if(!user){
+
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <Card className="w-96">
@@ -75,7 +77,7 @@ if (loading) {
         </CardFooter>
       </Card>
     </div>
-  );}
+  );
 };
 
 export default Login;

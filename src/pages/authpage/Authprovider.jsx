@@ -1,10 +1,12 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useEffect } from "react";
 import { useState } from "react";
-import { auth } from "../../config/firebase";
+import { auth, db } from "../../config/firebase";
 import { toast } from "react-toastify";
 import PropTypes from 'prop-types'
 import { useNavigate } from "react-router-dom";
+import { collection, doc, setDoc } from "firebase/firestore";
+
 
 export const AuthContext = createContext(null);
 
@@ -14,16 +16,26 @@ const AuthProvider = ({children}) => {
     const navigate = useNavigate();
 
 
-
+    const addUserToDatabase = async (email, uid) => {
+        const userCollectionRef = collection(db, "ticketer_user");
+        const documentData = {
+          email: email,
+          uid: uid,
+        };
+        const documnetRef = doc(userCollectionRef, uid);
+        await setDoc(documnetRef, documentData);
+      };
     const createUser = async(email, password) => {
         try {
             setLoading(true)
-            await createUserWithEmailAndPassword(auth, email,password)
+           const currentUser = await createUserWithEmailAndPassword(auth, email,password);
+           console.log(currentUser.user.u);
+           addUserToDatabase(currentUser.user.email, currentUser.user.uid);
             toast.success('Sign Up Successful');
-            navigate("/");
 
             
         } catch (error) {
+            setLoading(false);
             console.log(error);
             toast.error(error.message);
         }
@@ -37,6 +49,7 @@ const AuthProvider = ({children}) => {
             toast.success('Sign In Successful');
             navigate("/");
         } catch (error) {
+            setLoading(false);
             console.log(error);
             toast.error(error.message);
         }
@@ -46,6 +59,9 @@ const AuthProvider = ({children}) => {
     const logOut = () => {
         setLoading(true)
         signOut(auth);
+        setLoading(false)
+        navigate('/login')
+
     }
 
     useEffect(() => {
